@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.js'></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <table width="100%">
+        <thead>
+            <tr align="center">
+                <td>學號</td>
+                <td>姓名</td>
+                <td>性別</td>
+                <td>生日</td>
+                <td>電子郵件</td>
+                <td>電話</td>
+                <td>住址</td>
+                <td>身高</td>
+                <td>體重</td>
+                <td colspan="2">功能</td>
+            </tr>
+            <tr>
+                <td colspan="11">
+                    <hr>
+                </td>
+            </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+            <tr>
+                <td colspan="11" style="text-align: center;padding:10px">
+                    <button onclick="activeForm()">新增</button>
+                    <button onclick="loading()">加載</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <script>
+        /* select request */
+        let start = 0;
+
+        function loading() {
+            $.post("http://api.com/ajax/api.php?do=select", {
+                start
+            }, function (result) {
+                if (result != "fail") {
+                    $("tbody").append(result);
+                    //$(".mdy").click(chginput);
+                    start += 4;
+                    // console.log(start)
+                }
+            });
+        }
+        loading();
+    </script>
+</body>
+
+</html>

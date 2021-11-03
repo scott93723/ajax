@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.js'></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <table width="100%">
+        <thead>
+            <tr align="center">
+                <td>學號</td>
+                <td>姓名</td>
+                <td>性別</td>
+                <td>生日</td>
+                <td>電子郵件</td>
+                <td>電話</td>
+                <td>住址</td>
+                <td>身高</td>
+                <td>體重</td>
+                <td colspan="2">功能</td>
+            </tr>
+            <tr>
+                <td colspan="11">
+                    <hr>
+                </td>
+            </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+            <tr>
+                <td colspan="11" style="text-align: center;padding:10px">
+                    <button onclick="activeForm()">新增</button>
+                    <button onclick="loading()">加載</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <script>
+        /* select request */
+        let start = 0;
+
+        function loading() {
+            $.post("http://api.com/ajax/api.php?do=select", {
+                start
+            }, function (result) {
+                if (result != "fail") {
+                    $("tbody").append(result);
+                    $(".mdy").click(chginput);
+                    start += 4;
+                    console.log(start)
+                }
+            });
+        }
+        loading();
+
+        function chginput() {
+            // $(this) 指  <button class='mdy'>修改</button>
+            // $(this).parent 指該 <button> 所屬的 <td>
+            // $(this).parent().siblings() 指所有 <td> 的兄弟
+            let item = $(this).parent().siblings();
+            // ES6 JavaScript Template String 樣板字串 反引號 (`) 來插入一段字串，並且可以使用 ${} 來加入變數或函式
+            item.parent().html(`
+              <td><input type="hidden" name="cID" value="${item.eq(0).text()}">${item.eq(0).text()}</td>
+              <td><input type="text" name="cName" value="${item.eq(1).text()}"></td>
+              <td><input type="text" name="cSex" value="${item.eq(2).text()}"></td>
+              <td><input type="text" name="cBirthday" value="${item.eq(3).text()}"></td>
+              <td><input type="text" name="cEmail" value="${item.eq(4).text()}"></td>
+              <td><input type="text" name="cPhone" value="${item.eq(5).text()}"></td>
+              <td><input type="text" name="cAddr" value="${item.eq(6).text()}"></td>
+              <td><input type="text" name="cHeight" value="${item.eq(7).text()}"></td>
+              <td><input type="text" name="cWeight" value="${item.eq(8).text()}"></td>
+              <td>
+                <button onclick="chgtxt(this)">儲存</button>
+              </td>
+            `);
+        }
+
+        function chgtxt(who) {
+            const data = $(who).parents("tr").find("input").serialize();
+            console.log(data)
+
+            $.post("http://api.com/ajax/api.php?do=update", data, function (cdata) {
+
+                let item = $(who).parent().siblings();
+                const
+                    cID = item.eq(0).text(),
+                    cName = item.eq(1).children().val(),
+                    cSex = item.eq(2).children().val(),
+                    cBirthday = item.eq(3).children().val(),
+                    cEmail = item.eq(4).children().val(),
+                    cPhone = item.eq(5).children().val(),
+                    cAddr = item.eq(6).children().val(),
+                    cHeight = item.eq(7).children().val(),
+                    cWeight = item.eq(8).children().val();
+                item.parent().html(`
+                   <td>${cID}</td>
+                   <td>${cName}</td>
+                   <td>${cSex}</td>
+                   <td>${cBirthday}</td>
+                   <td>${cEmail}</td>
+                   <td>${cPhone}</td>
+                   <td>${cAddr}</td>
+                   <td>${cHeight}</td>
+                   <td>${cWeight}</td>
+                   <td>
+                       <button class='mdy'>修改</button>
+                       <button onclick='del(this)'>刪除</button>
+                    </td>
+                `);
+                $(".mdy").click(chginput);
+            });
+
+
+        }
+    </script>
+</body>
+
+</html>
